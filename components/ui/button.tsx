@@ -10,6 +10,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        "primary-gradient": "bg-gradient-to-br from-[#C64636] to-[#A03828] text-white hover:opacity-90 rounded-lg",
+        "outline-red": "border-2 border-[#C64636] text-[#C64636] bg-white/90 hover:bg-[#C64636] hover:text-white rounded-lg",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
@@ -36,7 +38,7 @@ const buttonVariants = cva(
   }
 )
 
-function Button({
+const Button = ({
   className,
   variant,
   size,
@@ -45,7 +47,7 @@ function Button({
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
-  }) {
+  }) => {
   const Comp = asChild ? Slot : "button"
 
   return (
