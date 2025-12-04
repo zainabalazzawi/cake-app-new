@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
@@ -11,8 +11,8 @@ import { OrderSummary } from '@/components/OrderSummary'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
-import { getProductBySlug } from '@/lib/products'
 import { formatPrice } from '@/lib/utils'
+import { useProduct } from '@/hooks/useProducts'
 
 const CANDLE_PRICE = 2
 const BIRTHDAY_CARD_PRICE = 5
@@ -20,12 +20,18 @@ const BIRTHDAY_CARD_PRICE = 5
 const ProductDetailPage = () => {
   const params = useParams()
   const slug = params.slug as string
-  const product = getProductBySlug(slug)
+  
+  const { data: product } = useProduct(slug)
 
   const [quantity, setQuantity] = useState(1)
   const [candle, setCandle] = useState(false)
   const [birthdayCard, setBirthdayCard] = useState(false)
   const [personalizedMessage, setPersonalizedMessage] = useState('')
+
+  // Scroll to top when component mounts or slug changes
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [slug])
 
   if (!product) {
     return (

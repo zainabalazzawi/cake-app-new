@@ -1,13 +1,15 @@
 'use client'
 
 import { ProductCard } from '@/components/ProductCard'
-import { getCelebrationCakes, getMiniCakes } from '@/lib/products'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { useAllProducts } from '@/hooks/useProducts'
 
 const Home = () => {
-  const celebrationCakes = getCelebrationCakes()
-  const miniCakes = getMiniCakes()
+  const { data } = useAllProducts()
+  
+  const celebrationCakes = data?.celebrationCakes || []
+  const miniCakes = data?.miniCakes || []
 
   return (
     <div className="min-h-screen bg-[#FFFBF7]">
