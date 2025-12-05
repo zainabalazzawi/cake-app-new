@@ -4,13 +4,20 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { User, ShoppingCart, Menu, X } from 'lucide-react'
+import SignInDialog from '@/components/SignInDialog'
 
 const navLinkStyles = "font-semibold text-[#6B5D54] hover:text-[#C64636] transition-colors"
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [signInDialogOpen, setSignInDialogOpen] = useState(false)
 
   const handleCloseMobileMenu = () => {
+    setMobileMenuOpen(false)
+  }
+
+  const handleOpenSignInDialog = () => {
+    setSignInDialogOpen(true)
     setMobileMenuOpen(false)
   }
 
@@ -43,13 +50,18 @@ export const Header = () => {
             >
               Mini Cakes
             </Link>
-            <Link
-              href="/login"
-              className={`flex items-center gap-2 ${navLinkStyles}`}
+            <SignInDialog 
+              open={signInDialogOpen} 
+              onOpenChange={setSignInDialogOpen}
             >
-              <User className="w-5 h-5" />
-              My Account
-            </Link>
+              <Button
+                variant="ghost"
+                className={`flex items-center gap-2 ${navLinkStyles}`}
+              >
+                <User className="w-5 h-5" />
+                My Account
+              </Button>
+            </SignInDialog>
             <Link href="/checkout">
               <Button 
                 size="sm" 
@@ -95,13 +107,13 @@ export const Header = () => {
             >
               Mini Cakes
             </Link>
-            <Link
-              href="/login"
-              className={`block ${navLinkStyles} py-2`}
-              onClick={handleCloseMobileMenu}
+            <Button
+              variant="ghost"
+              className={`block ${navLinkStyles} py-2 text-left w-full`}
+              onClick={handleOpenSignInDialog}
             >
               My Account
-            </Link>
+            </Button>
             <Link href="/checkout" onClick={handleCloseMobileMenu} className="block pt-3">
               <Button 
                 className="w-full flex items-center justify-center gap-2 text-white font-semibold shadow-md bg-linear-to-br from-[#C64636] to-[#A03828]"
