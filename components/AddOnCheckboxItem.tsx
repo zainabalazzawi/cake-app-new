@@ -10,15 +10,17 @@ interface AddOnCheckboxItemProps {
   onCheckedChange: (checked: boolean) => void
   label: string
   price: number
+  disabled?: boolean
 }
 
-export const AddOnCheckboxItem = ({ id, checked, onCheckedChange, label, price }: AddOnCheckboxItemProps) => {
+export const AddOnCheckboxItem = ({ id, checked, onCheckedChange, label, price, disabled }: AddOnCheckboxItemProps) => {
   return (
     <div className="flex items-center space-x-3">
       <Checkbox
         id={id}
         checked={checked}
         onCheckedChange={onCheckedChange}
+        disabled={disabled}
         className="border-amber-400 data-[state=checked]:bg-amber-900 data-[state=checked]:border-amber-900"
       />
       <Label

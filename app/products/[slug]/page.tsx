@@ -6,13 +6,14 @@ import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { ArrowLeft, ShoppingCart, Info, Cake } from 'lucide-react'
 import { QuantityCounter } from '@/components/QuantityCounter'
-import { AddOnCheckboxes } from '@/components/AddOnCheckboxes'
 import { OrderSummary } from '@/components/OrderSummary'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { formatPrice } from '@/lib/utils'
 import { useProduct } from '@/hooks/useProducts'
+import { useAddToCart } from '@/hooks/useCart'
+import AddOnCheckboxes from '@/components/AddOnCheckboxes'
 
 const CANDLE_PRICE = 2
 const BIRTHDAY_CARD_PRICE = 5
@@ -22,8 +23,9 @@ const ProductDetailPage = () => {
   const slug = params.slug as string
   
   const { data: product } = useProduct(slug)
+  const addToCartMutation = useAddToCart()
 
-  const [quantity, setQuantity] = useState(1)
+  const [quantity, setQuantity] = useState(0)
   const [candle, setCandle] = useState(false)
   const [birthdayCard, setBirthdayCard] = useState(false)
   const [personalizedMessage, setPersonalizedMessage] = useState('')
@@ -51,19 +53,15 @@ const ProductDetailPage = () => {
   const itemTotal = (product.price + addOnPrice) * quantity
 
   const handleAddToCart = () => {
-    // For now, just log the order details
-    const orderDetails = {
-      product: product.name,
+    if (!product) return
+
+    addToCartMutation.mutate({
+      productId: product.id,
       quantity,
-      addOns: {
-        candle,
-        birthdayCard,
-        personalizedMessage,
-      },
-      total: itemTotal,
-    }
-    console.log('Adding to cart:', orderDetails)
-    alert(`Added ${quantity} x ${product.name} to cart!\nTotal: ${formatPrice(itemTotal)}`)
+      includeCandle: candle,
+      includeBirthdayCard: birthdayCard,
+      personalizedMessage: personalizedMessage || undefined,
+    })
   }
 
   return (
@@ -115,7 +113,7 @@ const ProductDetailPage = () => {
               <QuantityCounter
                 value={quantity}
                 onChange={setQuantity}
-                min={1}
+                min={0}
                 max={50}
               />
             </div>
@@ -129,6 +127,7 @@ const ProductDetailPage = () => {
                 onCandleChange={setCandle}
                 onBirthdayCardChange={setBirthdayCard}
                 onMessageChange={setPersonalizedMessage}
+                quantity={quantity}
               />
             </div>
 
@@ -144,10 +143,11 @@ const ProductDetailPage = () => {
             {/* Add to Cart Button */}
             <Button
               onClick={handleAddToCart}
-              className="w-full h-14 text-lg font-semibold bg-amber-900 hover:bg-amber-800"
+              disabled={addToCartMutation.isPending}
+              className="w-full h-14 text-lg font-semibold bg-amber-900 hover:bg-amber-800 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ShoppingCart className="mr-2" size={20} />
-              Add to Cart
+              {addToCartMutation.isPending ? 'Adding to Cart...' : 'Add to Cart'}
             </Button>
 
             {/* Additional Info */}

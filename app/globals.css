@@ -90,3 +90,14 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Hide number input spinners */
+.hide-spinner {
+  appearance: textfield;
+}
+
+.hide-spinner::-webkit-outer-spin-button,
+.hide-spinner::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}

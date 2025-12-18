@@ -8,14 +8,15 @@ datasource db {
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   name        String
   category    String
   price       Float
   description String
   imageUrl    String
-  slug        String   @unique
-  createdAt   DateTime @default(now())
+  slug        String     @unique
+  createdAt   DateTime   @default(now())
+  cartItems   CartItem[]
 }
 
 model Order {
@@ -84,6 +85,7 @@ model User {
   password      String?
   accounts      Account[]
   sessions      Session[]
+  carts         Cart[]
 
   @@map("users")
 }
@@ -95,4 +97,35 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String?
+  sessionId String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  items     CartItem[]
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+  @@unique([sessionId])
+  @@map("carts")
+}
+
+model CartItem {
+  id                  String   @id @default(uuid())
+  cartId              String
+  productId           String
+  quantity            Int
+  includeCandle       Boolean  @default(false)
+  includeBirthdayCard Boolean  @default(false)
+  personalizedMessage String?
+  price               Float
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  cart                Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product             Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("cart_items")
 }

@@ -54,4 +54,41 @@ export interface CheckoutFormData {
   deliveryDate?: Date
 }
 
+export interface CartItem {
+  id: string
+  cartId: string
+  productId: string
+  quantity: number
+  includeCandle: boolean
+  includeBirthdayCard: boolean
+  personalizedMessage?: string
+  price: number
+  createdAt: Date
+  updatedAt: Date
+  product?: Product
+}
+
+export interface Cart {
+  id: string
+  userId?: string
+  sessionId?: string
+  createdAt: Date
+  updatedAt: Date
+  items: CartItem[]
+}
+
+export interface CartItemUpdateData {
+  quantity?: number
+  includeCandle?: boolean
+  includeBirthdayCard?: boolean
+  personalizedMessage?: string | null
+}
+
+export interface AddToCartData {
+  productId: string
+  quantity: number
+  includeCandle: boolean
+  includeBirthdayCard: boolean
+  personalizedMessage?: string
+}
 

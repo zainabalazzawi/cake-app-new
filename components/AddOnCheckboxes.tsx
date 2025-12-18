@@ -13,20 +13,23 @@ interface AddOnCheckboxesProps {
   onCandleChange: (checked: boolean) => void
   onBirthdayCardChange: (checked: boolean) => void
   onMessageChange: (message: string) => void
+  quantity: number
 }
 
 const CANDLE_PRICE = 2
 const BIRTHDAY_CARD_PRICE = 5
 
-export const AddOnCheckboxes = ({
+const AddOnCheckboxes = ({
   candle,
   birthdayCard,
   personalizedMessage,
   onCandleChange,
   onBirthdayCardChange,
   onMessageChange,
+  quantity,
 }: AddOnCheckboxesProps) => {
   const totalAddOnPrice = (candle ? CANDLE_PRICE : 0) + (birthdayCard ? BIRTHDAY_CARD_PRICE : 0)
+  const isDisabled = quantity === 0
 
   return (
     <Card className="border-amber-200 bg-amber-50/30">
@@ -42,6 +45,7 @@ export const AddOnCheckboxes = ({
           onCheckedChange={onCandleChange}
           label="Add Birthday Candle"
           price={CANDLE_PRICE}
+          disabled={isDisabled}
         />
 
         {/* Birthday Card */}
@@ -51,6 +55,7 @@ export const AddOnCheckboxes = ({
           onCheckedChange={onBirthdayCardChange}
           label="Add Birthday Card"
           price={BIRTHDAY_CARD_PRICE}
+          disabled={isDisabled}
         />
 
         {/* Personalized Message */}
@@ -63,7 +68,8 @@ export const AddOnCheckboxes = ({
             placeholder="Enter your custom message for the cake..."
             value={personalizedMessage}
             onChange={(e) => onMessageChange(e.target.value)}
-            className="min-h-[80px] resize-none border-amber-300 focus:border-amber-500"
+            disabled={isDisabled}
+            className="min-h-[80px] resize-none border-amber-300 focus:border-amber-500 disabled:opacity-50 disabled:cursor-not-allowed"
             maxLength={200}
           />
           <p className="text-xs text-gray-500">
@@ -77,7 +83,7 @@ export const AddOnCheckboxes = ({
         <CardFooter className="border-t border-amber-200">
           <div className="flex justify-between items-center w-full">
             <span className="text-sm font-medium text-amber-900">Add-ons Total:</span>
-            <span className="text-lg font-bold text-amber-900">
+            <span className="font-bold text-amber-900">
               {formatPrice(totalAddOnPrice)}
             </span>
           </div>
@@ -86,4 +92,6 @@ export const AddOnCheckboxes = ({
     </Card>
   )
 }
+
+export default AddOnCheckboxes
 

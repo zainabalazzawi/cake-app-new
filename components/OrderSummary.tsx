@@ -26,12 +26,10 @@ export const OrderSummary = ({
           <span className="text-gray-600">{productName} x {quantity}</span>
           <span className="font-medium">{formatPrice(productPrice * quantity)}</span>
         </div>
-        {addOnPrice > 0 && (
           <div className="flex justify-between">
             <span className="text-gray-600">Add-ons x {quantity}</span>
             <span className="font-medium">{formatPrice(addOnPrice * quantity)}</span>
           </div>
-        )}
       </CardContent>
       <CardFooter className="border-t border-amber-200 justify-between items-center">
         <span className="text-lg font-semibold text-amber-900">Total:</span>
