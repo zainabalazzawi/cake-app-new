@@ -12,7 +12,7 @@ interface QuantityCounterProps {
   max?: number
 }
 
-export const QuantityCounter = ({ 
+const QuantityCounter = ({ 
   value, 
   onChange, 
   min = 0, 
@@ -98,3 +98,4 @@ export const QuantityCounter = ({
   )
 }
 
+export default QuantityCounter
