@@ -25,11 +25,6 @@ export const Header = () => {
     setMobileMenuOpen(false)
   }
 
-  const handleOpenSignInDialog = () => {
-    setSignInDialogOpen(true)
-    setMobileMenuOpen(false)
-  }
-
   return (
     <header className="sticky top-0 z-50 w-full shadow-md bg-[#FFF5EE] border-b border-[#C64636]/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -193,13 +188,19 @@ export const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
+              <SignInDialog 
+              open={signInDialogOpen} 
+              onOpenChange={setSignInDialogOpen}
+            >
               <Button
                 variant="ghost"
-                className={`block ${navLinkStyles} py-2 text-left w-full`}
-                onClick={handleOpenSignInDialog}
-              >
+                className={`flex items-center gap-2 pl-0! ${navLinkStyles}`}
+                >
+                <User className="w-5 h-5" />
                 My Account
               </Button>
+            </SignInDialog>
+              
             )}
             <Link href="/checkout" onClick={handleCloseMobileMenu} className="block pt-3">
               <Button 
