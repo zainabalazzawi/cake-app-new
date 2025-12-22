@@ -42,15 +42,6 @@ const Home = () => {
               <span className="ml-2">→</span>
             </Button>
           </Link>
-          <Link href="/login">
-            <Button 
-              variant="outline-red"
-              size="lg" 
-              className="text-lg px-10 py-7 font-semibold transition-all duration-300 hover:shadow-lg"
-            >
-              Sign In
-            </Button>
-          </Link>
         </div>
         </div>
       </section>
