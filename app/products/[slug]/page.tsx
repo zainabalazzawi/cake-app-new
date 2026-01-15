@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import { ArrowLeft, ShoppingCart, Info, Cake } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Info, Cake, Check } from 'lucide-react'
+import { toast } from 'sonner'
 import QuantityCounter from '@/components/QuantityCounter'
 import { OrderSummary } from '@/components/OrderSummary'
 import { Button } from '@/components/ui/button'
@@ -52,8 +53,15 @@ const ProductDetailPage = () => {
   const addOnPrice = (candle ? CANDLE_PRICE : 0) + (birthdayCard ? BIRTHDAY_CARD_PRICE : 0)
   const itemTotal = (product.price + addOnPrice) * quantity
 
+  const resetForm = () => {
+    setQuantity(0)
+    setCandle(false)
+    setBirthdayCard(false)
+    setPersonalizedMessage('')
+  }
+
   const handleAddToCart = () => {
-    if (!product) return
+    if (!product || quantity === 0) return
 
     addToCartMutation.mutate({
       productId: product.id,
@@ -61,6 +69,24 @@ const ProductDetailPage = () => {
       includeCandle: candle,
       includeBirthdayCard: birthdayCard,
       personalizedMessage: personalizedMessage || undefined,
+    }, {
+      onSuccess: () => {
+        // Show toast notification
+        toast.success(`Added to cart!`, {
+          description: `${quantity}x ${product.name} has been added to your cart.`,
+        })
+        
+        // Reset form
+        resetForm()
+        
+        // Reset mutation state after 2 seconds (to clear success animation)
+        setTimeout(() => addToCartMutation.reset(), 2000)
+      },
+      onError: () => {
+        toast.error('Failed to add to cart', {
+          description: 'Please try again or contact support.',
+        })
+      }
     })
   }
 
@@ -143,11 +169,29 @@ const ProductDetailPage = () => {
             {/* Add to Cart Button */}
             <Button
               onClick={handleAddToCart}
-              disabled={addToCartMutation.isPending}
-              className="w-full h-14 text-lg font-semibold bg-amber-900 hover:bg-amber-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={addToCartMutation.isPending || quantity === 0}
+              className={`w-full h-14 text-lg font-semibold transition-all duration-300 ${
+                addToCartMutation.isSuccess 
+                  ? 'bg-green-600 hover:bg-green-600 scale-[1.02]' 
+                  : 'bg-amber-900 hover:bg-amber-800'
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              <ShoppingCart className="mr-2" size={20} />
-              {addToCartMutation.isPending ? 'Adding to Cart...' : 'Add to Cart'}
+              {addToCartMutation.isSuccess ? (
+                <>
+                  <Check className="mr-2 animate-bounce-in" size={20} />
+                  Added to Cart!
+                </>
+              ) : addToCartMutation.isPending ? (
+                <>
+                  <span className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Adding...
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="mr-2" size={20} />
+                  Add to Cart
+                </>
+              )}
             </Button>
 
             {/* Additional Info */}
