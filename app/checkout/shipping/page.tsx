@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Truck } from 'lucide-react'
+import { ArrowLeft, Truck, Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -19,12 +19,13 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { formatPrice } from '@/lib/utils'
-import { useCart } from '@/hooks/useCart'
+import { useCart, useCreateOrder } from '@/hooks/useCart'
 import { checkoutFormSchema, type CheckoutFormValues } from '@/lib/validations/checkout'
 
 const ShippingPage = () => {
   const router = useRouter()
   const { data: cart } = useCart()
+  const createOrder = useCreateOrder()
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -46,17 +47,38 @@ const ShippingPage = () => {
   const total = subtotal + tax
 
   const onSubmit = async (data: CheckoutFormValues) => {
-    // For now, just log the data and show success
-    console.log('Order submitted:', { ...data, cart: cartItems, total })
-    
-    toast.success('Order placed successfully!', {
-      description: 'Thank you for your order. We will contact you shortly.',
-    })
+    try {
+      // Transform cart items to order items
+      const orderItems = cartItems.map((item) => ({
+        productId: item.productId,
+        productName: item.product?.name || 'Unknown Product',
+        quantity: item.quantity,
+        includeCandle: item.includeCandle,
+        includeBirthdayCard: item.includeBirthdayCard,
+        personalizedMessage: item.personalizedMessage,
+        price: item.price,
+      }))
 
-    // Redirect to home page after successful order
-    setTimeout(() => {
-      router.push('/')
-    }, 2000)
+      await createOrder.mutateAsync({
+        ...data,
+        items: orderItems,
+        total,
+      })
+
+      toast.success('Order placed successfully!', {
+        description: 'Thank you for your order. We will contact you shortly.',
+      })
+
+      // Redirect to home page after successful order
+      setTimeout(() => {
+        router.push('/')
+      }, 2000)
+    } catch (error) {
+      console.error('Error creating order:', error)
+      toast.error('Failed to place order', {
+        description: 'Please try again or contact support.',
+      })
+    }
   }
 
   return (
@@ -176,12 +198,14 @@ const ShippingPage = () => {
               </div>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting}
-                className="w-full h-14 text-lg font-semibold bg-amber-900 hover:bg-amber-800"
-              >
-                {form.formState.isSubmitting ? (
+                disabled={form.formState.isSubmitting || createOrder.isPending}
+                variant="primary-gradient"
+                size="lg"
+                className="w-full mt-4"
+                  >
+                {(form.formState.isSubmitting || createOrder.isPending) ? (
                   <>
-                    <span className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     Processing...
                   </>
                 ) : (

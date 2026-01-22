@@ -118,6 +118,16 @@ const CheckoutPage = () => {
           </div>
         </div>
 
+        <Link href="/checkout/shipping">
+          <Button 
+            variant="primary-gradient"
+            disabled={cartItems.length === 0}
+            size="lg"
+            className="w-full mt-4"
+          >
+            Continue to Shipping
+          </Button>
+        </Link>
 
       </CardContent>
     </Card>

@@ -92,3 +92,14 @@ export interface AddToCartData {
   personalizedMessage?: string
 }
 
+export interface CreateOrderData {
+  customerName: string
+  email: string
+  phone: string
+  address: string
+  city: string
+  state: string
+  zipCode: string
+  items: Omit<OrderItem, 'id' | 'orderId'>[]
+  total: number
+}
