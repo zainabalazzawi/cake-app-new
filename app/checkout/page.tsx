@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,7 +10,7 @@ import { useCart, useDeleteCartItem } from '@/hooks/useCart'
 
 
 const CheckoutPage = () => {
-
+  const router = useRouter()
 
   // Fetch cart data from API
   const { data: cart, isLoading: cartLoading, error: cartError } = useCart()
@@ -118,16 +119,15 @@ const CheckoutPage = () => {
           </div>
         </div>
 
-        <Link href="/checkout/shipping">
-          <Button 
-            variant="primary-gradient"
-            disabled={cartItems.length === 0}
-            size="lg"
-            className="w-full mt-4"
-          >
-            Continue to Shipping
-          </Button>
-        </Link>
+        <Button 
+          variant="primary-gradient"
+          disabled={cartItems.length === 0}
+          size="lg"
+          className="w-full mt-4"
+          onClick={() => router.push('/checkout/shipping')}
+        >
+          Continue to Shipping
+        </Button>
 
       </CardContent>
     </Card>
