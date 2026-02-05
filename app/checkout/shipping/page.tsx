@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Truck, Loader2 } from 'lucide-react'
+import { ArrowLeft, Truck, ArrowRight, Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -59,20 +59,16 @@ const ShippingPage = () => {
         price: item.price,
       }))
 
-      await createOrder.mutateAsync({
+      // Create order with pending payment status
+      const order = await createOrder.mutateAsync({
         ...data,
         items: orderItems,
         total,
+        paymentStatus: 'pending',
       })
 
-      toast.success('Order placed successfully!', {
-        description: 'Thank you for your order. We will contact you shortly.',
-      })
-
-      // Redirect to home page after successful order
-      setTimeout(() => {
-        router.push('/')
-      }, 2000)
+      // Navigate to payment page with order ID
+      router.push(`/checkout/payment?orderId=${order.id}`)
     } catch (error) {
       console.error('Error creating order:', error)
       toast.error('Failed to place order', {
@@ -202,14 +198,17 @@ const ShippingPage = () => {
                 variant="primary-gradient"
                 size="lg"
                 className="w-full mt-4"
-                  >
+              >
                 {(form.formState.isSubmitting || createOrder.isPending) ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Processing...
+                    Creating Order...
                   </>
                 ) : (
-                  `Place Order • ${formatPrice(total)}`
+                  <>
+                    Continue to Payment
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </>
                 )}
               </Button>
             </form>

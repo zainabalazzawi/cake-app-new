@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import type { CartItem, AddToCartData, Cart, Order, CreateOrderData } from '@/types'
+import type { CartItem, AddToCartData, Cart, Order, CreateOrderData, PaymentData, PaymentResult } from '@/types'
 
 export const useAddToCart = () => {
   const queryClient = useQueryClient()
@@ -52,8 +52,32 @@ export const useCreateOrder = () => {
       return response.data.order
     },
     onSuccess: () => {
-      // Invalidate cart queries to clear cart UI after order is placed
       queryClient.invalidateQueries({ queryKey: ['cart'] })
     },
+  })
+}
+
+export const usePayment = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (data: PaymentData) => {
+      const response = await axios.post<PaymentResult>('/api/payment', data)
+      return response.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] })
+    },
+  })
+}
+
+export const useOrder = (orderId: string) => {
+  return useQuery({
+    queryKey: ['order', orderId],
+    queryFn: async () => {
+      const response = await axios.get<Order>(`/api/orders/${orderId}`)
+      return response.data
+    },
+    enabled: !!orderId,
   })
 }

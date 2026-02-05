@@ -34,8 +34,27 @@ export interface Order {
   state?: string
   zipCode: string
   total: number
+  paymentStatus: PaymentStatus
+  paymentMethod?: string
+  paymentId?: string
+  paidAt?: Date
   items: OrderItem[]
   createdAt: Date
+}
+
+export type PaymentStatus = 'pending' | 'completed' | 'failed'
+
+export interface PaymentResult {
+  success: boolean
+  paymentId?: string
+  order?: Order
+  error?: string
+}
+
+export interface PaymentData {
+  sourceId: string
+  amount: number
+  orderId: string
 }
 
 export interface LoginFormData {
@@ -102,4 +121,17 @@ export interface CreateOrderData {
   zipCode: string
   items: Omit<OrderItem, 'id' | 'orderId'>[]
   total: number
+  paymentId?: string
+  paymentStatus?: PaymentStatus
+  paymentMethod?: string
+}
+
+export interface ShippingData {
+  customerName: string
+  email: string
+  phone: string
+  address: string
+  city: string
+  state: string
+  zipCode: string
 }
